@@ -4,10 +4,10 @@
 
 零依赖 · 纯本地 · 中文优先 · Node.js
 
+[![CI](https://github.com/yokipeek/whale-memory/actions/workflows/ci.yml/badge.svg)](https://github.com/yokipeek/whale-memory/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](package.json)
 [![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
-[![Tests](https://img.shields.io/badge/tests-13%20passing-brightgreen)](tests/core.test.mjs)
 [![Docs](https://img.shields.io/badge/docs-ARCHITECTURE-blue)](docs/ARCHITECTURE.md)
 
 ```
@@ -581,6 +581,10 @@ npm test
 13 个测试，覆盖分词、双尺子稀有度、零宽清洗、重复合并、幂律衰减、工作记忆五槽。
 
 不需要任何依赖，`node --test` 就够。
+
+> **CI 踩坑记录**：`test` 脚本用的是显式路径 `node --test tests/core.test.mjs`，不是 glob。
+> Node 18/20 的 `--test` 不接受 glob 字符串（会把 `"tests/*.test.mjs"` 当字面路径然后 `MODULE_NOT_FOUND`），
+> 而 Node 22/24 支持。这个差异让 12 个 CI job 里有 6 个只在旧版本上挂，看起来像版本兼容问题，其实是脚本写法。
 
 ---
 

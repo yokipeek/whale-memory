@@ -26,10 +26,10 @@ jobs:
 
       # 本项目零依赖，不需要 npm install
       #
-      # ⚠ 这段踩过坑（v1.0.0 首跑 6 个 job 全挂在这）：
-      #   原来写的是 shell 变量比较 `if [ "$deps" != "0" ]`，
-      #   Node 18/20 上 node -e 的输出可能带换行/被 shell 吞掉，比较就永远为真。
-      #   → 改成让 node 自己判断 exit code，不经过 shell 字符串比较。
+      # ⚠ 为什么这步写成独立脚本而不是 shell 一行：
+      #   最早写的是 `deps=$(node -e "...")` 然后 `[ "$deps" != "0" ]`，
+      #   在 Node 18/20 的 runner 上会误报（6 个 job 全挂在一个本该通过的检查上）。
+      #   改成 node 脚本自己定 exit code，不经过 shell 字符串比较。
       - name: 确认零依赖
         run: node scripts/check-zero-deps.mjs
 
