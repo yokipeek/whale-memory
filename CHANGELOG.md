@@ -2,6 +2,21 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [未发布]
+
+### 新增
+
+- **一键装进 qq-bridge**：`node scripts/install-to-bridge.mjs`（默认干跑，`--apply` 真装）。拷十个 `memory-*.js` + 词表、按语义锚点给 `bridge.js` 打九处补丁、注册四个记忆工具。幂等（探针字符串判定）、抗上游升级（锚点不依赖行号）、可回滚（改前备份 + 写完 `node --check`，语法错自动还原）
+- **自动定位 qq-bridge**：依次尝试 `--bridge` 参数、`QQ_BRIDGE_DIR` 环境变量、仓库旁边的 `qq-bridge` / `qq-bridge-hub/qq-bridge`、当前目录往上六层、常见默认位置，每个候选都用 `looksLikeBridge()` 验（`src/bridge.js` 存在 + package.json name 含 qq-bridge）。找不到时列出所有试过的路径
+- **`FROM-SCRATCH.md`**：从一台干净机器开始的七步顺序，包含哪一步能一键、哪一步必须手动（SnowLuma 因 EULA 禁自动化部署）、每一步的失败信号对照表
+- **`examples/minimal-bot.mjs`**：零依赖 HTTP 机器人示例，与 QQ/TG 无关，三个接入点可照抄
+
+### 修复
+
+- **程序记忆把回忆提问学成做法**：「你还记得我熬夜的事吗」被抽成技能名「我熬夜的事吗」，提示词多一条「做法」让模型每轮照演。正则加 `(?<![还你我])` 并标记 `notQuestion`，另在抽取出加问句过滤
+- **「别人」被当成否定词（语义反转）**：「我不喜欢别人叫我老板」被抽成「做法：别这样做 —— 别人叫我老板」，把对方讨厌的事记成该做的事。`别` 后加 `(?!人)`
+- **UTF-8 在 chunk 边界被劈开**：示例服务里 `for await` 对每个 Buffer 单独 `toString()`，中文字符 3 字节跨边界会存成永久乱码。改用 `req.setEncoding('utf8')`
+
 ## [1.0.0] — 2026-10-29
 
 首个公开版本。从一套真实运行了半年、服务单一角色的记忆系统里抽出来，去掉业务耦合，补上测试与文档。

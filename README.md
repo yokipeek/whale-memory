@@ -40,6 +40,11 @@ Whale Memory 用一套能解释、能调试、能自己长出词表的机制解�
 > **拿到手想直接跑起来？** 看 [DEPLOYMENT.md](DEPLOYMENT.md)——
 > 三条路线（纯库 / 接自己的机器人 / 完整复刻小鲸鱼）、定时任务挂法、
 > 数据备份搬家、词表自学习、排错手册都在那里。这份 README 讲「它怎么想」，那份讲「它怎么跑」。
+>
+> **连 qq-bridge 都还没有？** 看 [FROM-SCRATCH.md](FROM-SCRATCH.md)——
+> 从一台干净的机器开始，七步走完：DSH → qq-bridge → preset → SnowLuma → 配置 →
+> 装记忆层 → 验证。里面写清楚了哪一步能一键、哪一步必须你手动，
+> 以及每一步出错时你会看到什么。
 
 ---
 
@@ -210,6 +215,9 @@ node scripts/install-to-bridge.mjs --apply     # 真装
 `jieba-learned.txt`——那是你已经学出来的词。
 
 装完重启桥，`curl /api/socialV2/memory-stats` 返回 `ok:true` 就成了。
+
+**但这一步的前提是「你已经有一个跑着的 qq-bridge」。** 如果你是全新机器、连桥都还没装，
+先看 [FROM-SCRATCH.md](FROM-SCRATCH.md)——那里面是从 Node 版本开始，一步步到扫码登录 QQ 的完整顺序。
 
 跑一遍完整示例：
 
