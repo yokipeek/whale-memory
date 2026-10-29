@@ -10,16 +10,23 @@
     "./lexicon": "./src/memory-lexicon.js",
     "./vector": "./src/memory-vector.js",
     "./semantic": "./src/memory-semantic.js",
+    "./attention": "./src/memory-attention.js",
     "./consolidate": "./src/memory-consolidate.js",
+    "./local-digest": "./src/memory-local-digest.js",
     "./self": "./src/memory-self.js",
     "./procedural": "./src/memory-procedural.js",
-    "./replay": "./src/memory-replay.js"
+    "./replay": "./src/memory-replay.js",
+    "./package.json": "./package.json"
   },
   "files": [
     "src",
     "data",
     "scripts",
-    "docs"
+    "docs",
+    "examples",
+    "DEPLOYMENT.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md"
   ],
   "keywords": [
     "memory",
@@ -40,7 +47,9 @@
     "demo": "node examples/demo.mjs",
     "test": "node --test tests/core.test.mjs",
     "check:lexicon": "node scripts/check-lexicon.mjs",
-    "verify": "npm run check:lexicon && npm test && npm run demo",
+    "check:deps": "node scripts/check-zero-deps.mjs",
+    "tick": "node scripts/memory-tick.mjs",
+    "verify": "npm run check:deps && npm run check:lexicon && npm test && npm run demo",
     "learn": "node scripts/learn-lexicon.mjs",
     "learn:apply": "node scripts/learn-lexicon.mjs --apply"
   },

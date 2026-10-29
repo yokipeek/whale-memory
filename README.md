@@ -9,6 +9,7 @@
 [![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](package.json)
 [![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
 [![Docs](https://img.shields.io/badge/docs-ARCHITECTURE-blue)](docs/ARCHITECTURE.md)
+[![Deploy](https://img.shields.io/badge/docs-DEPLOYMENT-orange)](DEPLOYMENT.md)
 
 ```
 你的机器人聊完就忘？
@@ -32,6 +33,10 @@ Whale Memory 用一套能解释、能调试、能自己长出词表的机制解�
 - [已知边界](#已知边界)
 - [项目故事：这些数字是怎么来的](#项目故事这些数字是怎么来的)
 - [参与贡献](#参与贡献)
+
+> **拿到手想直接跑起来？** 看 [DEPLOYMENT.md](DEPLOYMENT.md)——
+> 三条路线（纯库 / 接自己的机器人 / 完整复刻小鲸鱼）、定时任务挂法、
+> 数据备份搬家、词表自学习、排错手册都在那里。这份 README 讲「它怎么想」，那份讲「它怎么跑」。
 
 ---
 
@@ -160,7 +165,9 @@ Whale Memory 走第三条路：**有结构地记，有梯度地忘，有理由�
 npm install whale-memory
 ```
 
-或者直接复制 `src/` 目录进你的项目——**它没有任何依赖**，只用 Node 内置模块。
+或者直接复制 `src/` 和 `data/` 两个目录进你的项目——**它没有任何依赖**，只用 Node 内置模块。
+
+> ⚠️ `data/` 别漏。里面是 920 KB 中文分词词表，少了它分词会退化、检索明显变差。
 
 ```js
 import { createMemoryStore } from 'whale-memory';
@@ -182,6 +189,10 @@ mem.remember('他不抽烟；喜欢蓝色小鲸鱼', {
 const hits = mem.recall('他抽烟吗', { limit: 3 });
 // → [{ id, text, evidence: 0.34, score: 0.70, confidence, confidenceLabel, ... }]
 ```
+
+**这只是「库能跑」。要接进一个真实的机器人**——记流水、注入 prompt、定时整理、
+备份搬家、认自己的私房词——看 [DEPLOYMENT.md](DEPLOYMENT.md)，那里有完整接线图和
+可直接照抄的配置。
 
 跑一遍完整示例：
 
