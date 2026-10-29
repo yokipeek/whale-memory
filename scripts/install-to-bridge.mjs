@@ -33,7 +33,44 @@ const argv = process.argv.slice(2);
 const apply = argv.includes('--apply');
 const forceData = argv.includes('--force-data');
 const bridgeArg = argv.indexOf('--bridge');
-const BRIDGE = bridgeArg >= 0 ? path.resolve(argv[bridgeArg + 1]) : 'C:\\Apps\\qq-bridge-hub\\qq-bridge';
+
+// ── 目标桥：怎么找 ────────────────────────────────────────────────────────────
+// 新用户不知道自己在哪，所以不能只认一个写死的路径。依次试：
+//   ① --bridge 参数  ② 环境变量 QQ_BRIDGE_DIR  ③ 仓库旁边的 qq-bridge
+//   ④ 当前目录往上逐层（用户在桥目录里跑脚本时命中）  ⑤ 常见默认位置
+// 每个候选都验一遍「是不是真的 qq-bridge」，避免把十个文件拷进一个空目录。
+function looksLikeBridge(dir) {
+  if (!fs.existsSync(path.join(dir, 'src', 'bridge.js'))) return false;
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+    if (String(pkg.name || '').includes('qq-bridge')) return true;
+  } catch {}
+  return fs.existsSync(path.join(dir, 'src', 'mcp-snowluma-safe.js'));
+}
+
+function bridgeCandidates() {
+  const list = [];
+  if (bridgeArg >= 0 && argv[bridgeArg + 1]) list.push(path.resolve(argv[bridgeArg + 1]));
+  if (process.env.QQ_BRIDGE_DIR) list.push(path.resolve(process.env.QQ_BRIDGE_DIR));
+  list.push(path.resolve(REPO, '..', 'qq-bridge'));
+  list.push(path.resolve(REPO, 'qq-bridge'));
+  list.push(path.resolve(REPO, '..', 'qq-bridge-hub', 'qq-bridge'));
+  let cur = process.cwd();
+  for (let i = 0; i < 6; i += 1) {
+    list.push(cur);
+    const up = path.dirname(cur);
+    if (up === cur) break;
+    cur = up;
+  }
+  list.push('C:\\Apps\\qq-bridge-hub\\qq-bridge');
+  list.push('C:\\qq-bridge');
+  list.push('D:\\qq-bridge');
+  return [...new Set(list)];
+}
+
+const tried = bridgeCandidates();
+const found = tried.find((d) => looksLikeBridge(d));
+const BRIDGE = found || tried[0];
 
 const log = (...a) => console.log(...a);
 const ok = (s) => log(`  ✅ ${s}`);
@@ -776,10 +813,17 @@ log(`  目标桥：${BRIDGE}`);
 log(`  模式：${apply ? '真装（--apply）' : '干跑（只报告，加 --apply 才动手）'}`);
 log('══════════════════════════════════════════════════════════');
 
-if (!fs.existsSync(path.join(BRIDGE, 'package.json'))) {
-  bad(`${BRIDGE} 不像一个 qq-bridge（找不到 package.json）。用 --bridge 指定正确目录。`);
+if (!looksLikeBridge(BRIDGE)) {
+  bad(`找不到 qq-bridge。我试过这些地方：`);
+  for (const d of tried) log(`     · ${d}`);
+  log('');
+  log('  三种指定方式，任选一种：');
+  log('     node scripts/install-to-bridge.mjs --bridge D:\\qq-bridge');
+  log('     set QQ_BRIDGE_DIR=D:\\qq-bridge   （PowerShell：$env:QQ_BRIDGE_DIR="D:\\qq-bridge"）');
+  log('     在桥目录里直接跑 node <本脚本的绝对路径>');
   process.exit(1);
 }
+log(`  找到桥：${BRIDGE}`);
 
 let problems = 0;
 
