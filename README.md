@@ -216,6 +216,16 @@ node scripts/install-to-bridge.mjs --apply     # 真装
 
 装完重启桥，`curl /api/socialV2/memory-stats` 返回 `ok:true` 就成了。
 
+**装之前/装之后不确定环境对不对？先跑自检：**
+
+```bash
+node scripts/check-env.mjs          # 或者 npm run check:env
+```
+
+十三项只读检查：Node 版本、桥在哪、白名单填没填、DSH 和 SnowLuma 通不通、preset 在不在、
+记忆层补丁落了几个、词表全不全。**不改任何文件**，每条不通过都直接给修复命令。
+退出码 0 = 没有阻塞项，1 = 有硬伤。
+
 **但这一步的前提是「你已经有一个跑着的 qq-bridge」。** 如果你是全新机器、连桥都还没装，
 先看 [FROM-SCRATCH.md](FROM-SCRATCH.md)——那里面是从 Node 版本开始，一步步到扫码登录 QQ 的完整顺序。
 

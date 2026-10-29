@@ -36,6 +36,10 @@
 | 6 | **装记忆层** | ✅ **一键** `node scripts/install-to-bridge.mjs --apply` |
 | 7 | 启动 + 验证 | 手动（一条命令 + 一个 curl） |
 
+第 6 步上还有一个小工具值一提：`node scripts/check-env.mjs` 把上面六步的结果全查一遍
+（十三项只读检查），装之前跑一次，能提前发现「Node 版本不对」「白名单是空的」
+「两个端口填成同一个」这类到后面才暴露的问题。
+
 **为什么第 4 步不能自动化。** SnowLuma 是专有组件，它的 EULA 第 5.4 条明确写了：并入第三方安装包或 Docker 镜像、通过自动化脚本部署，都需要事先取得书面授权。qq-bridge 上游从 v0.1.5 起也主动移除了 `start_snowluma` / `stop_snowluma` 两个工具。所以任何「一键装完」的脚本都不该替你拉起 SnowLuma —— 包括我这个。下载 zip、解压、双击 `launcher.bat`、手机扫码，这四下手得你自己来。
 
 ---
@@ -65,6 +69,10 @@
 DSH（DeepSeek Harness）是整个链路的大脑。qq-bridge 本身不会说话，它把消息转给 DSH，DSH 里的人格和模型决定怎么回。
 
 装好、启动，确认 `http://127.0.0.1:3080` 能打开。**先别关它，后面一直要用。**
+
+![DSH Web GUI 打开后是这样：中间一个输入框，左边一列工作区](docs/diagrams/screens/02-dsh.png)
+
+看到这个界面 = DSH 活着。它自己不需要你做任何配置，等第 3 步往里装 preset。
 
 验证：
 
@@ -136,18 +144,34 @@ node scripts/setup-dsh.mjs
 
 ## 第 5 步：向导 + 填 config.json
 
-打开 SnowLuma 打印的 WebUI 地址（常见 `http://localhost:5099`，**以你启动日志里实际打印的为准**），用日志里的初始密码登录，按向导走三件事：
+打开 SnowLuma 打印的 WebUI 地址（常见 `http://localhost:5099`，**以你启动日志里实际打印的为准**），第一眼是这个登录页：
+
+![SnowLuma v2.1.0 登录页：一个「输入访问令牌」输入框 + 进入控制台按钮](docs/diagrams/screens/03-snowluma-login.png)
+
+**这个框填的是启动日志里那个初始密码**（不是 QQ 密码，也不是 accessToken）。进去之后可以在「系统设置」里改。
+
+按向导走三件事：
 
 1. 同意条款
 2. 设置密码
 3. 接入 QQ 进程 —— 这里会出二维码，**手机 QQ 扫码登录**
 
-登录成功后再进 SnowLuma 设置里开两个服务：
+登录成功后进「节点配置」，你会看到这个界面 —— 左边选中刚登上的号，右边一排 tab：
 
-- **WebSocket 服务端**（默认端口 `3001`）
-- **HTTP API**（默认端口 `3000`）
+![SnowLuma 节点配置页：通用设置 / HTTP API / HTTP 客户端 / WS 服务端 / WS 客户端](docs/diagrams/screens/04-snowluma-overview.png)
 
-有 accessToken 就记下来。
+要开两个服务，**两个端口不一样，这是后面 `config.json` 填错的第一大来源**：
+
+![HTTP API 这一 tab：http-default，监听 127.0.0.1:3000](docs/diagrams/screens/05-snowluma-onebot.png)
+
+![WS 服务端这一 tab：ws-default，监听 127.0.0.1:3001](docs/diagrams/screens/06-snowluma-ws.png)
+
+| 图 | tab | 端口 | 填到 config.json 的哪 |
+| --- | --- | --- | --- |
+| HTTP API | `http-default` | 3000 | `snowluma.httpUrl` |
+| WS 服务端 | `ws-default` | 3001 | `snowluma.wsUrl` |
+
+有 accessToken 就记下来（图里那个「已设 Token」的标记 = 这个端点开了鉴权）。
 
 然后回到 `qq-bridge/config.json`，填两处：
 
@@ -174,6 +198,38 @@ node scripts/setup-dsh.mjs
 ## 第 6 步：装记忆层（唯一一键的那步）
 
 到这一步 qq-bridge 已经能收发消息了，但它还没有长期记忆 —— 每次对话都是失忆的。现在装记忆层。
+
+### 先跑一次环境自检
+
+```bash
+node scripts/check-env.mjs
+```
+
+十三项只读检查，**不改任何文件**。装之前跑一遍能省掉后面一半的排错：Node 版本够不够、
+桥认没认到、白名单填没填、DSH 和 SnowLuma 通不通、preset 在不在。每条不通过都直接给修复命令。
+
+对有问题的项，你可以对照这份实测输出理解长什么样：
+
+```
+✅ Node 版本：24.20.0（qq-bridge 要 ≥22.13，够了）
+✅ 找到 qq-bridge：C:\Apps\qq-bridge-hub\qq-bridge
+⚠️  config.json：能解析，但文件带 UTF-8 BOM
+     → 桥自己读时会去掉 BOM，但你自己写脚本解析时容易踩坑（JSON.parse 报 Unexpected token）。建议存成「UTF-8 无 BOM」。
+✅ 白名单：1 个私聊 + 1 个群
+✅ DSH 可达：http://127.0.0.1:3080 端口在听
+✅ DSH 端 preset：agent-presets 与 state/mode.json 都在
+✅ SnowLuma 端点：WS 3001 与 HTTP 3000 都在听
+✅ SnowLuma 登录状态：已登录：<昵称>（<QQ号>）
+⚠️  桥控制台端口：3100 已在监听 —— 桥正在跑（或端口被别的程序占了）
+✅ 记忆层：11 个 memory-*.js，关键符号齐全
+✅ 词表：基础词表就位，自学词 800 条
+
+  没有阻塞项，但有 2 条提醒 —— 看一眼上面带 → 的说明。
+```
+
+退出码 `0` = 没有阻塞项（有 ⚠️ 也能继续），`1` = 有 ❌ 硬伤，先修再说。
+
+### 再装
 
 把 whale-memory clone 到 **qq-bridge 旁边**（同级目录）：
 
@@ -257,6 +313,12 @@ Windows 想让它崩溃自动重启就用 `start.bat`（守护模式，`start.ba
 ```
 
 **第一行 `[memory] 记忆整理循环已启动` 出现 = 记忆层活着。** 没有这行，说明补丁没落或者 `config.json` 里 `socialV2.memory.enabled` 被设成了 false。
+
+打开控制台 `http://127.0.0.1:3100/?token=<consoleToken>`，四张指标卡全绿就对了：
+
+![桥的控制台运行总览：DSH 已连接 / SnowLuma 正常·接收中 / 当前运行模式二代仿真](docs/diagrams/screens/01-bridge-console.png)
+
+**这张图里最该盯的是第二格「SnowLuma 上游」。** 显示「未连接 · 连不上 QQ 网关，请先启动 SnowLuma」= 第 4 步没做对（SnowLuma 没开，或 `wsUrl` 端口不对）。这时候桥能跑、记忆层也在跑，但一条消息都收不到。
 
 然后验证记忆 HTTP 端点。先拿到 consoleToken（在 `config.json` 里，或控制台页面能看到）：
 

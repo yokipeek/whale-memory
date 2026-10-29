@@ -342,6 +342,44 @@ node scripts/install-to-bridge.mjs --bridge D:\qq-bridge --apply   # 桥不在�
 「完全没装」更难排查。看到这种报错就去 `bridge.js` 里搜相近代码，把安装器里那条
 `find` 改成新的锚点，再重跑。
 
+### 装之前先自检：`check-env.mjs`
+
+不想装到一半才发现 Node 版本不够、白名单是空的、SnowLuma 端口填反了 —— 先跑这个：
+
+```bash
+node scripts/check-env.mjs              # 人看的彩色输出
+node scripts/check-env.mjs --json       # 给脚本用的结构化结果
+node scripts/check-env.mjs --bridge D:\qq-bridge
+```
+
+**只读，不改任何文件。** 它查十三项，每一项不通过都直接给修复命令：
+
+| # | 查什么 | 不通过会怎样 |
+|---|---|---|
+| 1 | Node 版本 | < 22.13 桥那边 `npm install` 会硬拒 |
+| 2 | 找到 qq-bridge 没有 | 找不到就列全部试过的路径 |
+| 3 | `config.json` 能否解析、带不带 BOM | 带 BOM 时你自己写脚本解析会炸 |
+| 4 | 白名单填了没有 | 空的 + `allowAllWhenEmpty:false` = 一条消息都不响应 |
+| 5 | `ownerQQ` 填了没有 | 空的就没人能审批、管理 |
+| 6 | DSH 可达 | 不可达则 `memoryTick` 一直 `skipped: dsh-not-ready` |
+| 7 | DSH 端 preset 装了没有 | 没装则群聊会话建不起来 |
+| 8 | SnowLuma 两个端口通不通、是不是填成了同一个 | 同一个 → MCP 报 `HTTP 426` |
+| 9 | SnowLuma 登录状态 | 未登录 = 收不到消息 |
+| 10 | 桥的控制台端口占没占 | 占着说明已有一个实例在跑 |
+| 11 | `consoleToken` 长度 | 太短或空 → 后面 curl 全部 401 |
+| 12 | 记忆层关键符号齐不齐（11 个 `memory-*.js`、8 个必装符号） | 报「还差哪一项」 |
+| 13 | 词表三件 | 缺基础词表 = 检索全线失效 |
+
+退出码：`0` = 没有阻塞项（可以有 ⚠️ 提醒），`1` = 有 ❌ 硬伤。
+
+**它是这么判「记忆层装了没」的**：不看注释块个数（那会把「把回忆拼进提示词」这条
+漏掉，因为它是往既有行尾追加变量、不插注释），而是查 8 个关键符号是否齐全 ——
+`from './memory-core.js'`、`createMemoryStore(`、`memoryTick(`、`startMemoryLoop(`、
+`logEpisode(`、`gatherWorkingMemory(`、`recallText`、`startMemoryLoop();`。
+这条经验值得记住：**判据要选「不管怎么组装都必然出现」的最小片段，不能选「最常见的写法」** ——
+第一版写成 `import { createMemoryStore }` 就永远匹配不上，因为真实代码是
+`import { createMemoryStore, consolidatePending, scoreMemory } from ...`。
+
 **装完怎么验证**（重启桥之后）：
 
 ```bash

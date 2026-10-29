@@ -8,8 +8,10 @@
 
 - **一键装进 qq-bridge**：`node scripts/install-to-bridge.mjs`（默认干跑，`--apply` 真装）。拷十个 `memory-*.js` + 词表、按语义锚点给 `bridge.js` 打九处补丁、注册四个记忆工具。幂等（探针字符串判定）、抗上游升级（锚点不依赖行号）、可回滚（改前备份 + 写完 `node --check`，语法错自动还原）
 - **自动定位 qq-bridge**：依次尝试 `--bridge` 参数、`QQ_BRIDGE_DIR` 环境变量、仓库旁边的 `qq-bridge` / `qq-bridge-hub/qq-bridge`、当前目录往上六层、常见默认位置，每个候选都用 `looksLikeBridge()` 验（`src/bridge.js` 存在 + package.json name 含 qq-bridge）。找不到时列出所有试过的路径
-- **`FROM-SCRATCH.md`**：从一台干净机器开始的七步顺序，包含哪一步能一键、哪一步必须手动（SnowLuma 因 EULA 禁自动化部署）、每一步的失败信号对照表
+- **`FROM-SCRATCH.md`**：从一台干净机器开始的七步顺序，包含哪一步能一键、哪一步必须手动（SnowLuma 因 EULA 禁自动化部署）、每一步的失败信号对照表。配了六张真实截图（DSH 首屏、SnowLuma 登录页、OneBot 的 HTTP/WS 两个端口页、桥控制台），QQ 号与头像已打码
+- **`scripts/check-env.mjs`**：十三项只读环境自检（`npm run check:env`）。查 Node 版本、桥在哪、白名单填没填、DSH 与 SnowLuma 通不通、preset 在不在、记忆层关键符号齐不齐、词表全不全。每条不通过直接给修复命令，退出码 0/1 = 有无阻塞项。**判「记忆层装了没」用的是八个必现符号而不是注释块计数** —— 因为「把回忆拼进提示词」那条补丁是往既有行尾追加变量、不插注释块
 - **`examples/minimal-bot.mjs`**：零依赖 HTTP 机器人示例，与 QQ/TG 无关，三个接入点可照抄
+- **`scripts/shoot-snowluma.mjs` / `scripts/shoot-bridge-console.mjs`**：文档截图的复现脚本（可选，需要 playwright），截图前自动给 QQ 号/头像/token 打码
 
 ### 修复
 
