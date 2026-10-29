@@ -25,14 +25,13 @@ jobs:
           node-version: ${{ matrix.node }}
 
       # 本项目零依赖，不需要 npm install
+      #
+      # ⚠ 这段踩过坑（v1.0.0 首跑 6 个 job 全挂在这）：
+      #   原来写的是 shell 变量比较 `if [ "$deps" != "0" ]`，
+      #   Node 18/20 上 node -e 的输出可能带换行/被 shell 吞掉，比较就永远为真。
+      #   → 改成让 node 自己判断 exit code，不经过 shell 字符串比较。
       - name: 确认零依赖
-        shell: bash
-        run: |
-          deps=$(node -e "const p=require('./package.json');console.log(Object.keys(p.dependencies||{}).length)")
-          if [ "$deps" != "0" ]; then
-            echo "::error::引入运行时依赖了（$deps 个）。本项目零依赖是硬约束。"
-            exit 1
-          fi
+        run: node scripts/check-zero-deps.mjs
 
       - name: 语法检查
         shell: bash
