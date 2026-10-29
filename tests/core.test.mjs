@@ -164,6 +164,46 @@ test('程序记忆：学会的做法能存能取', () => {
   }
 });
 
+test('程序记忆：回忆提问不算做法（踩过的坑）', () => {
+  // 实测「你还记得我熬夜的事吗」被抽成技能名「我熬夜的事吗」、步骤也是它，
+  // 于是提示词里出现一条「做法：我熬夜的事吗」，模型每轮照它演一遍。
+  // 判据：①「记得」前面是 还/你/我 = 在问，不是在教；②片段以疑问语气词收尾。
+  const { store, cleanup } = freshStore();
+  try {
+    for (const q of ['你还记得我熬夜的事吗', '你还记得我喜欢什么吗', '你记得我叫什么吗']) {
+      store.learnProcedures(q, { who: '他' });
+    }
+    assert.equal(store.listProcedures().length, 0, '回忆提问不该变成做法');
+
+    // 真教的东西还得学得会
+    store.learnProcedures('记得先合成再发，长文本按句切开', { who: '他' });
+    const list = store.listProcedures();
+    assert.ok(list.length >= 1, '真教的做法应该学进去');
+    assert.ok(!/吗|呢|吧/.test(list[0].name || ''), `技能名不该带疑问语气：${list[0].name}`);
+  } finally {
+    cleanup();
+  }
+});
+
+test('程序记忆：「别人」不是否定词（语义反转的坑）', () => {
+  // 实测「我不喜欢别人叫我老板，叫我老婆大人」被抽成
+  // 「做法：别这样做 —— 别人叫我老板，叫我老婆大人」——
+  // 把「他不喜欢」读成了「照这个做」，模型会照着去叫老板。
+  // 把对方讨厌的事记成该做的事，比记不住更糟。
+  const { store, cleanup } = freshStore();
+  try {
+    store.learnProcedures('我不喜欢别人叫我老板，叫我老婆大人', { who: '他' });
+    assert.equal(store.listProcedures().length, 0, '「别人」不是否定句，不该学成做法');
+
+    // 真否定还得抓得住
+    store.learnProcedures('别叫我老板', { who: '他' });
+    const list = store.listProcedures();
+    assert.ok(list.length >= 1, '真否定句应该学成一条做法');
+  } finally {
+    cleanup();
+  }
+});
+
 test('工作记忆：五个槽都存在', () => {
   const { store, cleanup } = freshStore();
   try {
