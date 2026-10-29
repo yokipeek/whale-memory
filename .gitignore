@@ -1,0 +1,23 @@
+# 记忆库运行时数据
+state/
+*.db
+*.db-journal
+*.db-wal
+
+# 说明：data/jieba-learned.txt 是**示例词表**（来自本项目的语料），故意提交。
+# 你用自己语料跑 learn-lexicon.mjs 之后会覆盖它，那之后建议加进 .gitignore。
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# 依赖（本项目零依赖，但以防万一）
+node_modules/
+
+# 临时产物
+.archify/
+*.log
+tmp/

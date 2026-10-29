@@ -1,0 +1,524 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Whale Memory · 系统结构",
+    "output": "whale-memory-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "you",
+      "type": "external",
+      "label": "你的应用",
+      "sublabel": "聊天 / 助手 / 任何 Node 程序",
+      "pos": [
+        16,
+        396
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "api",
+      "type": "frontend",
+      "label": "公开 API",
+      "sublabel": "createMemoryStore",
+      "pos": [
+        206,
+        396
+      ],
+      "size": [
+        132,
+        64
+      ],
+      "tag": "remember / recall"
+    },
+    {
+      "id": "lexicon",
+      "type": "backend",
+      "label": "① 分词器",
+      "sublabel": "memory-lexicon.js",
+      "pos": [
+        206,
+        190
+      ],
+      "size": [
+        132,
+        64
+      ],
+      "tag": "jieba 10.9万 + 自学习"
+    },
+    {
+      "id": "attention",
+      "type": "backend",
+      "label": "② 编码门控",
+      "sublabel": "memory-attention.js",
+      "pos": [
+        206,
+        60
+      ],
+      "size": [
+        132,
+        64
+      ],
+      "tag": "值不值得记"
+    },
+    {
+      "id": "core",
+      "type": "backend",
+      "label": "记忆核心",
+      "sublabel": "memory-core.js",
+      "pos": [
+        398,
+        396
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "tag": "编排全部流程"
+    },
+    {
+      "id": "vector",
+      "type": "backend",
+      "label": "③ 检索打分",
+      "sublabel": "memory-vector.js",
+      "pos": [
+        398,
+        580
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "tag": "n-gram + 线索扩展"
+    },
+    {
+      "id": "semantic",
+      "type": "backend",
+      "label": "④ LSA 语义",
+      "sublabel": "memory-semantic.js",
+      "pos": [
+        398,
+        720
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "tag": "从语料学词义"
+    },
+    {
+      "id": "episodic",
+      "type": "database",
+      "label": "情景流水",
+      "sublabel": "episodic/DATE.jsonl",
+      "pos": [
+        598,
+        580
+      ],
+      "size": [
+        148,
+        64
+      ],
+      "tag": "按天分册"
+    },
+    {
+      "id": "semjson",
+      "type": "database",
+      "label": "语义记忆",
+      "sublabel": "semantic.jsonl",
+      "pos": [
+        598,
+        440
+      ],
+      "size": [
+        148,
+        64
+      ],
+      "tag": "提炼后事实"
+    },
+    {
+      "id": "pending",
+      "type": "database",
+      "label": "未说出口",
+      "sublabel": "pending.json",
+      "pos": [
+        598,
+        300
+      ],
+      "size": [
+        148,
+        64
+      ],
+      "tag": "会过期"
+    },
+    {
+      "id": "proc",
+      "type": "database",
+      "label": "程序记忆",
+      "sublabel": "procedural.json",
+      "pos": [
+        598,
+        160
+      ],
+      "size": [
+        148,
+        64
+      ],
+      "tag": "怎么做"
+    },
+    {
+      "id": "cold",
+      "type": "database",
+      "label": "冷库",
+      "sublabel": "cold/MONTH.jsonl",
+      "pos": [
+        598,
+        720
+      ],
+      "size": [
+        148,
+        64
+      ],
+      "tag": "沉底不删"
+    },
+    {
+      "id": "space",
+      "type": "database",
+      "label": "语义空间缓存",
+      "sublabel": "semantic-space.json",
+      "pos": [
+        598,
+        830
+      ],
+      "size": [
+        148,
+        64
+      ],
+      "tag": "933 KB"
+    },
+    {
+      "id": "consolidate",
+      "type": "backend",
+      "label": "⑤ 巩固器",
+      "sublabel": "memory-consolidate.js",
+      "pos": [
+        806,
+        300
+      ],
+      "size": [
+        146,
+        64
+      ],
+      "tag": "流水→事实"
+    },
+    {
+      "id": "digest",
+      "type": "backend",
+      "label": "⑥ 本地巩固",
+      "sublabel": "memory-local-digest.js",
+      "pos": [
+        806,
+        160
+      ],
+      "size": [
+        146,
+        64
+      ],
+      "tag": "零成本规则"
+    },
+    {
+      "id": "self",
+      "type": "backend",
+      "label": "⑦ 自我叙事",
+      "sublabel": "memory-self.js",
+      "pos": [
+        806,
+        440
+      ],
+      "size": [
+        146,
+        64
+      ],
+      "tag": "时间线/里程碑"
+    },
+    {
+      "id": "replay",
+      "type": "backend",
+      "label": "⑧ 睡眠重放",
+      "sublabel": "memory-replay.js",
+      "pos": [
+        806,
+        580
+      ],
+      "size": [
+        146,
+        64
+      ],
+      "tag": "跨天联想"
+    },
+    {
+      "id": "tick",
+      "type": "backend",
+      "label": "维护心跳",
+      "sublabel": "你定时调用",
+      "pos": [
+        1012,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "tag": "衰减·合并·巩固"
+    },
+    {
+      "id": "wm",
+      "type": "frontend",
+      "label": "五槽工作记忆",
+      "sublabel": "gatherWorkingMemory()",
+      "pos": [
+        1012,
+        500
+      ],
+      "size": [
+        140,
+        64
+      ],
+      "tag": "≤800 字"
+    },
+    {
+      "id": "prompt",
+      "type": "cloud",
+      "label": "注入提示词",
+      "sublabel": "交给你的 LLM",
+      "pos": [
+        1012,
+        640
+      ],
+      "size": [
+        140,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "写入路径（每句话）",
+      "wraps": [
+        "lexicon",
+        "attention"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "读取路径（每次提问）",
+      "wraps": [
+        "vector",
+        "semantic"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "消化路径（定时后台）",
+      "wraps": [
+        "consolidate",
+        "digest",
+        "self",
+        "replay",
+        "tick"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "you-api",
+      "from": "you",
+      "to": "api",
+      "label": "写 / 查",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-core",
+      "from": "api",
+      "to": "core",
+      "variant": "emphasis"
+    },
+    {
+      "id": "core-lex",
+      "from": "core",
+      "to": "lexicon",
+      "label": "切词"
+    },
+    {
+      "id": "core-att",
+      "from": "core",
+      "to": "attention",
+      "label": "门控"
+    },
+    {
+      "id": "core-ep",
+      "from": "core",
+      "to": "episodic",
+      "label": "logEpisode"
+    },
+    {
+      "id": "core-sem",
+      "from": "core",
+      "to": "semjson",
+      "label": "remember"
+    },
+    {
+      "id": "core-pend",
+      "from": "core",
+      "to": "pending",
+      "label": "addPending",
+      "variant": "dashed"
+    },
+    {
+      "id": "core-proc",
+      "from": "core",
+      "to": "proc",
+      "label": "learnProcedures",
+      "variant": "dashed"
+    },
+    {
+      "id": "core-vec",
+      "from": "core",
+      "to": "vector",
+      "label": "打分"
+    },
+    {
+      "id": "vec-sem",
+      "from": "vector",
+      "to": "semantic",
+      "label": "语义通道",
+      "variant": "dashed"
+    },
+    {
+      "id": "sem-space",
+      "from": "semantic",
+      "to": "space",
+      "label": "缓存",
+      "variant": "dashed"
+    },
+    {
+      "id": "ep-cons",
+      "from": "episodic",
+      "to": "consolidate",
+      "label": "当天流水"
+    },
+    {
+      "id": "cons-sem",
+      "from": "consolidate",
+      "to": "semjson",
+      "label": "提炼入库",
+      "variant": "dashed"
+    },
+    {
+      "id": "dg-sem",
+      "from": "digest",
+      "to": "semjson",
+      "label": "规则抽取",
+      "variant": "dashed"
+    },
+    {
+      "id": "rp-sem",
+      "from": "replay",
+      "to": "semjson",
+      "label": "联想",
+      "variant": "dashed"
+    },
+    {
+      "id": "self-ep",
+      "from": "self",
+      "to": "episodic",
+      "label": "读时间线",
+      "variant": "dashed"
+    },
+    {
+      "id": "tick-cons",
+      "from": "tick",
+      "to": "consolidate",
+      "label": "驱动"
+    },
+    {
+      "id": "tick-dg",
+      "from": "tick",
+      "to": "digest"
+    },
+    {
+      "id": "tick-rp",
+      "from": "tick",
+      "to": "replay"
+    },
+    {
+      "id": "tick-self",
+      "from": "tick",
+      "to": "self"
+    },
+    {
+      "id": "tick-cold",
+      "from": "tick",
+      "to": "cold",
+      "label": "沉底",
+      "variant": "dashed"
+    },
+    {
+      "id": "core-wm",
+      "from": "core",
+      "to": "wm",
+      "label": "组装"
+    },
+    {
+      "id": "wm-prompt",
+      "from": "wm",
+      "to": "prompt",
+      "label": "注入",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "写入：一句话怎么变成记忆",
+      "items": [
+        "切词器把句子拆成真词（不是碎砖头）",
+        "编码门控判断值不值得记，噪声直接丢",
+        "情景流水按天落盘，重要内容提炼进语义层"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "读取：怎么想起来",
+      "items": [
+        "证据门槛：命中词的稀有度够不够（双尺子：库内 df × 通用词频）",
+        "三路融合：BM25 字面 + n-gram/LSA 语义 + 记忆分",
+        "放不下就宁可不给 —— 不硬凑条数"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "遗忘：会淡但不会消失",
+      "items": [
+        "幂律衰减（尾巴长，十年后仍不为零）",
+        "long 跌破 0.3 降 working，working 跌破 0.06 沉冷库",
+        "重复条目相似度 ≥0.95 自动合并，hits 累加"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "消化：后台怎么整理",
+      "items": [
+        "本地巩固先跑（零成本、永不空手），模型巩固后跑",
+        "睡眠重放打乱跨天碎片找联系 → insight 槽",
+        "自传体摘要 + 里程碑，让「我是谁」不靠流水"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "name": "whale-memory",
+  "version": "1.0.0",
+  "description": "会淡忘、能联想、跨场合记住同一个人的长期记忆系统。零依赖，纯本地。",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/memory-core.js",
+  "exports": {
+    ".": "./src/memory-core.js",
+    "./lexicon": "./src/memory-lexicon.js",
+    "./vector": "./src/memory-vector.js",
+    "./semantic": "./src/memory-semantic.js",
+    "./consolidate": "./src/memory-consolidate.js",
+    "./self": "./src/memory-self.js",
+    "./procedural": "./src/memory-procedural.js",
+    "./replay": "./src/memory-replay.js"
+  },
+  "files": [
+    "src",
+    "data",
+    "scripts",
+    "docs"
+  ],
+  "keywords": [
+    "memory",
+    "long-term-memory",
+    "llm",
+    "chatbot",
+    "companion",
+    "chinese",
+    "bm25",
+    "lsa",
+    "jieba",
+    "forgetting-curve"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "demo": "node examples/demo.mjs",
+    "test": "node --test \"tests/*.test.mjs\"",
+    "learn": "node scripts/learn-lexicon.mjs",
+    "learn:apply": "node scripts/learn-lexicon.mjs --apply"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_NAME/whale-memory.git"
+  }
+}
