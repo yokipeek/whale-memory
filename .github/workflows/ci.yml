@@ -41,7 +41,7 @@ jobs:
           done
 
       - name: 单元测试
-        run: node --test "tests/*.test.mjs"
+        run: npm test
 
       - name: 端到端 demo
         run: node examples/demo.mjs
