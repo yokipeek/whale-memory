@@ -127,14 +127,27 @@ if ((await nodeLink.count()) > 0) {
   await nodeLink.click({ timeout: 8000 }).catch(() => {});
   await page.waitForTimeout(2000);
 
-  // 默认停在「通用设置」，要再点一次才看得到端口
-  await page.getByText(/^HTTP API/).first().click({ timeout: 6000 }).catch(() => {});
-  await page.waitForTimeout(1500);
-  await shot('05-snowluma-onebot.png', 'OneBot HTTP 端口');
+  // 默认停在「通用设置」。切 tab 必须用 role=tab ——
+  // getByText(/^HTTP API/) 会同时命中 tab 和右上角「+ 新建 HTTP API」按钮，
+  // .first() 点到按钮上，切页静默失败，两次截图都是同一页（踩过）。
+  const tab = (re) => page.getByRole('tab', { name: re }).first();
 
-  await page.getByText(/^WS 服务端/).first().click({ timeout: 6000 }).catch(() => {});
-  await page.waitForTimeout(1500);
-  await shot('06-snowluma-ws.png', 'OneBot WS 端口');
+  async function shootTab(name, re, label) {
+    const t = tab(re);
+    if (!(await t.count())) {
+      console.log(`  跳过 ${name}：没有匹配 ${re} 的 tab`);
+      return;
+    }
+    await t.click({ timeout: 8000 }).catch((e) => console.log('  点击失败:', e.message));
+    await page.waitForTimeout(1800);
+    // 真正确认切过去了，否则截出来的是上一页
+    const ok = await t.getAttribute('aria-selected');
+    if (ok !== 'true') console.log(`  ⚠️ ${label} 的 tab 可能没选中（aria-selected=${ok}）`);
+    await shot(name, label);
+  }
+
+  await shootTab('05-snowluma-onebot.png', /^HTTP API/, 'OneBot HTTP 端口');
+  await shootTab('06-snowluma-ws.png', /^WS 服务端/, 'OneBot WS 端口');
 }
 
 await browser.close();

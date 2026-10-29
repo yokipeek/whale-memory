@@ -160,16 +160,18 @@ node scripts/setup-dsh.mjs
 
 ![SnowLuma 节点配置页：通用设置 / HTTP API / HTTP 客户端 / WS 服务端 / WS 客户端](docs/diagrams/screens/04-snowluma-overview.png)
 
-要开两个服务，**两个端口不一样，这是后面 `config.json` 填错的第一大来源**：
+要开两个服务，**两个端口不一样，这是后面 `config.json` 填错的第一大来源**。这两页长得几乎一样（同一页、只差 tab 高亮和端口），所以下面这张图是拼起来的对比 —— 上半张是 HTTP API，下半张是 WS 服务端，红框圈的就是要抄走的地址：
 
-![HTTP API 这一 tab：http-default，监听 127.0.0.1:3000](docs/diagrams/screens/05-snowluma-onebot.png)
+![对比：HTTP API 页 http-default 监听 3000，对应 snowluma.httpUrl；WS 服务端页 ws-default 监听 3001，对应 snowluma.wsUrl](docs/diagrams/screens/07-port-compare.png)
 
-![WS 服务端这一 tab：ws-default，监听 127.0.0.1:3001](docs/diagrams/screens/06-snowluma-ws.png)
+单独两页原图在这儿，想放大看细节：`docs/diagrams/screens/05-snowluma-onebot.png`（HTTP API，`http-default`，3000）和 `docs/diagrams/screens/06-snowluma-ws.png`（WS 服务端，`ws-default`，3001）。
 
-| 图 | tab | 端口 | 填到 config.json 的哪 |
+| tab | 卡片名 | 端口 | 填到 config.json 的哪 |
 | --- | --- | --- | --- |
 | HTTP API | `http-default` | 3000 | `snowluma.httpUrl` |
 | WS 服务端 | `ws-default` | 3001 | `snowluma.wsUrl` |
+
+**两个填成同一个不会报错** —— 桥照样启动、日志照样正常，只有 MCP 工具一调用返回 `HTTP 426`。看到 426 就回来查这两行。
 
 有 accessToken 就记下来（图里那个「已设 Token」的标记 = 这个端点开了鉴权）。
 
