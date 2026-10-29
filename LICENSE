@@ -25,4 +25,4 @@ SOFTWARE.
 ## 第三方
 
 `data/jieba-dict.txt`、`data/jieba-freq.txt` 来自 [jieba](https://github.com/fxsjy/jieba)
-的 `extra_dict/dict.txt.small`，MIT 许可。完整声明见 `data/jieba-来源.txt`。
+的 `extra_dict/dict.txt.small`，MIT 许可。完整声明见 `data/jieba-NOTICE.txt`。

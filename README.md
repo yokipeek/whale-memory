@@ -4,6 +4,12 @@
 
 零依赖 · 纯本地 · 中文优先 · Node.js
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](package.json)
+[![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
+[![Tests](https://img.shields.io/badge/tests-13%20passing-brightgreen)](tests/core.test.mjs)
+[![Docs](https://img.shields.io/badge/docs-ARCHITECTURE-blue)](docs/ARCHITECTURE.md)
+
 ```
 你的机器人聊完就忘？
 上下文一压缩，前面的事就没了？
@@ -25,6 +31,7 @@ Whale Memory 用一套能解释、能调试、能自己长出词表的机制解�
 - [和别的记忆方案有什么不同](#和别的记忆方案有什么不同)
 - [已知边界](#已知边界)
 - [项目故事：这些数字是怎么来的](#项目故事这些数字是怎么来的)
+- [参与贡献](#参与贡献)
 
 ---
 
@@ -577,6 +584,24 @@ npm test
 
 ---
 
+## 参与贡献
+
+先读 [CONTRIBUTING.md](CONTRIBUTING.md) 的三条硬规矩：
+
+1. 改动必须能单独关掉
+2. 阈值必须带出处
+3. 改打分逻辑必须附两组数据（调参集 + **没参与过调参**的泛化集）
+
+第 3 条来自这个项目最惨的一次事故——详见上面的[项目故事](#教训二我从-11-条自造样例里调出了过拟合)。
+
+改代码前建议先看 [ARCHITECTURE.md 第 11 节「被否决的设计」](docs/ARCHITECTURE.md#11-被否决的设计)，里面记了 5 个看起来能 work、实测会失败的方案。
+
+版本记录见 [CHANGELOG.md](CHANGELOG.md)。
+
+---
+
 ## 许可
 
-MIT。分词词表来自 jieba（MIT），见 `data/jieba-来源.txt`。
+MIT。分词词表来自 jieba（MIT），见 `data/jieba-NOTICE.txt`。
+
+自学习词表 `data/jieba-learned.txt` 是**示例**，说明见 [data/README.md](data/README.md)。

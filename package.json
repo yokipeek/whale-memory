@@ -39,12 +39,19 @@
   "scripts": {
     "demo": "node examples/demo.mjs",
     "test": "node --test \"tests/*.test.mjs\"",
+    "check:lexicon": "node scripts/check-lexicon.mjs",
+    "verify": "npm run check:lexicon && npm test && npm run demo",
     "learn": "node scripts/learn-lexicon.mjs",
     "learn:apply": "node scripts/learn-lexicon.mjs --apply"
   },
   "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_NAME/whale-memory.git"
+    "url": "https://github.com/yokipeek/whale-memory.git"
+  },
+  "author": "yokipeek",
+  "homepage": "https://github.com/yokipeek/whale-memory#readme",
+  "bugs": {
+    "url": "https://github.com/yokipeek/whale-memory/issues"
   }
 }

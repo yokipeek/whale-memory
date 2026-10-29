@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [18, 20, 22, 24]
+    name: node ${{ matrix.node }} / ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      # 本项目零依赖，不需要 npm install
+      - name: 确认零依赖
+        shell: bash
+        run: |
+          deps=$(node -e "const p=require('./package.json');console.log(Object.keys(p.dependencies||{}).length)")
+          if [ "$deps" != "0" ]; then
+            echo "::error::引入运行时依赖了（$deps 个）。本项目零依赖是硬约束。"
+            exit 1
+          fi
+
+      - name: 语法检查
+        shell: bash
+        run: |
+          for f in src/*.js scripts/*.mjs examples/*.mjs tests/*.mjs; do
+            node --check "$f" || exit 1
+          done
+
+      - name: 单元测试
+        run: node --test "tests/*.test.mjs"
+
+      - name: 端到端 demo
+        run: node examples/demo.mjs
+
+      - name: 词表可用性
+        run: node scripts/check-lexicon.mjs
