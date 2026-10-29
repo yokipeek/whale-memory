@@ -197,6 +197,20 @@ const hits = mem.recall('他抽烟吗', { limit: 3 });
 备份搬家、认自己的私房词——看 [DEPLOYMENT.md](DEPLOYMENT.md)，那里有完整接线图和
 可直接照抄的配置。
 
+### 已经有 qq-bridge？一条命令
+
+```bash
+node scripts/install-to-bridge.mjs            # 干跑，看它要改什么
+node scripts/install-to-bridge.mjs --apply     # 真装
+```
+
+拷十个 `memory-*.js` + 词表、给 `bridge.js` 按语义锚点打九处补丁、注册四个记忆工具。
+**幂等**（已装过就跳过，重跑一百次结果一样）、**抗升级**（锚点不依赖行号，上游改了行号
+照样能落）、**可回滚**（改前备份 + 写完语法检查，错了自动还原）。它不会覆盖你的
+`jieba-learned.txt`——那是你已经学出来的词。
+
+装完重启桥，`curl /api/socialV2/memory-stats` 返回 `ok:true` 就成了。
+
 跑一遍完整示例：
 
 ```bash

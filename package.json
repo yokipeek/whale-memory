@@ -51,6 +51,8 @@
     "check:lexicon": "node scripts/check-lexicon.mjs",
     "check:deps": "node scripts/check-zero-deps.mjs",
     "tick": "node scripts/memory-tick.mjs",
+    "install:bridge": "node scripts/install-to-bridge.mjs",
+    "install:bridge:apply": "node scripts/install-to-bridge.mjs --apply",
     "verify": "npm run check:deps && npm run check:lexicon && npm test && npm run demo",
     "learn": "node scripts/learn-lexicon.mjs",
     "learn:apply": "node scripts/learn-lexicon.mjs --apply"
